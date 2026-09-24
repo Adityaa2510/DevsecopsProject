@@ -1,0 +1,1749 @@
+# DevSecOps Foundations — Comprehensive Notes
+
+## 1. Computing and Internet Basics
+
+### 1.1 Computer System
+
+A **computer system** is a combination of hardware, operating system, software, network, storage, and users that work together to process data.
+
+From a security perspective, every component can introduce risk:
+
+* **Hardware** can be stolen or physically compromised.
+* **Operating systems** can be misconfigured or exploited.
+* **Software** can contain vulnerabilities.
+* **Networks** can be exposed to unauthorized users.
+* **Storage** can leak sensitive information.
+* **Users** can become targets of phishing and social engineering.
+
+### DevSecOps Relevance
+
+A web application is not only source code. It depends on:
+
+**Code → Servers → Containers → Secrets → Logs → Cloud Resources → IAM → Networks → CI/CD Pipelines**
+
+Therefore, DevSecOps security must cover the complete application lifecycle.
+
+---
+
+## 1.2 Server
+
+A **server** is a system or program that provides services to clients over a network.
+
+Examples:
+
+* Web server → serves websites and APIs
+* Database server → stores and retrieves data
+* Authentication server → verifies user identity
+
+Modern servers can be:
+
+* Physical machines
+* Virtual machines
+* Containers
+* Serverless functions
+
+### Server Security
+
+Important security controls include:
+
+* Patching
+* System hardening
+* Access control
+* Logging
+* Encryption
+* Network restrictions
+* Least privilege
+
+---
+
+## 1.3 Client
+
+A **client** is a system or application that requests services from a server.
+
+Examples:
+
+* Browser requesting a website
+* Mobile application calling an API
+* Backend service communicating with another backend service
+
+### Important Security Principle
+
+**Never fully trust the client.**
+
+Client-side controls can be bypassed.
+
+For example, hiding a button or disabling a form field does not provide authorization. Sensitive authorization decisions must be enforced on the **server side**.
+
+---
+
+## 1.4 Application
+
+An **application** is software designed to perform a particular function for users or other systems.
+
+Examples:
+
+* Banking application
+* E-commerce website
+* Mobile application
+* API
+* Internal dashboard
+
+### Application Security
+
+Application security protects against vulnerabilities in:
+
+* Design
+* Source code
+* Dependencies
+* Configuration
+* Authentication
+* Authorization
+* Runtime behavior
+
+---
+
+# 2. Web Application Fundamentals
+
+## 2.1 Web Application
+
+A **web application** is an application accessed through a browser or HTTP client.
+
+A typical web application contains:
+
+**Frontend → Backend → API → Database**
+
+It may also contain:
+
+* Authentication
+* Authorization
+* Sessions
+* External services
+* Cloud infrastructure
+
+### Common Web Security Risks
+
+* Broken access control
+* Cross-Site Scripting (XSS)
+* SQL Injection
+* Cross-Site Request Forgery (CSRF)
+* Server-Side Request Forgery (SSRF)
+* Insecure session management
+* File upload vulnerabilities
+* Security misconfiguration
+
+---
+
+## 2.2 Browser
+
+A **browser** is a client application used to access web content.
+
+It communicates using HTTP/HTTPS and processes:
+
+* HTML
+* CSS
+* JavaScript
+* Images
+* API responses
+* Other web resources
+
+### Browser Security
+
+Security issues involving browsers include:
+
+* XSS
+* Clickjacking
+* CSRF
+* Cookie theft
+* CORS misconfiguration
+* Mixed content
+
+---
+
+# 3. What Happens When You Type a URL?
+
+When a user enters a URL:
+
+1. Browser parses the URL.
+2. Browser checks its cache.
+3. Domain is resolved using DNS.
+4. Server IP address is obtained.
+5. TCP connection is established.
+6. For HTTPS, TLS negotiation occurs.
+7. Browser sends an HTTP request.
+8. Server sends an HTTP response.
+9. Browser renders the page.
+10. Additional resources such as JavaScript, CSS, images, and APIs are loaded.
+
+### Security Checks
+
+Security can be considered at every stage:
+
+**DNS → TCP → TLS → HTTP → Cookies → Authentication → Authorization → CORS → CSP → Server-side Input Validation**
+
+---
+
+# 4. URL
+
+**URL = Uniform Resource Locator**
+
+A URL identifies the location of a resource on a network or the internet.
+
+Example:
+
+`https://example.com:443/api/users?id=10#profile`
+
+| Component     | Meaning      |
+| ------------- | ------------ |
+| `https`       | Scheme       |
+| `example.com` | Host         |
+| `443`         | Port         |
+| `/api/users`  | Path         |
+| `id=10`       | Query string |
+| `profile`     | Fragment     |
+
+### Security Relevance
+
+Attackers and security testers examine:
+
+* Paths
+* Parameters
+* Query strings
+* Redirects
+* URL parsing
+
+These may be involved in:
+
+* IDOR
+* SSRF
+* Open Redirect
+* Injection vulnerabilities
+
+---
+
+# 5. DNS
+
+**DNS = Domain Name System**
+
+DNS converts domain names into IP addresses.
+
+Example:
+
+`example.com → IP address`
+
+### Security Relevance
+
+DNS can be abused through:
+
+* Phishing domains
+* DNS hijacking
+* Subdomain takeover
+* Misconfigured DNS records
+* SSRF bypass techniques
+
+DNS is also important during reconnaissance because it can help identify:
+
+* Subdomains
+* Services
+* External attack surface
+
+---
+
+# 6. IP Address
+
+An **IP address** is a numerical address used to identify a device or service on a network.
+
+### IPv4
+
+Example:
+
+`192.168.1.10`
+
+### IPv6
+
+Example:
+
+`2001:db8::1`
+
+### Security Relevance
+
+IP addresses are used in:
+
+* Firewall rules
+* ACLs
+* Logging
+* Threat detection
+* Network segmentation
+
+### Public vs Private IP
+
+**Public IP**
+
+* Reachable from the internet.
+* Usually represents internet-facing infrastructure.
+
+**Private IP**
+
+* Used inside internal networks.
+* Not directly routable on the public internet.
+
+---
+
+# 7. Private IP Address
+
+Common private IPv4 ranges:
+
+| Range                           | CIDR             |
+| ------------------------------- | ---------------- |
+| `10.0.0.0 – 10.255.255.255`     | `10.0.0.0/8`     |
+| `172.16.0.0 – 172.31.255.255`   | `172.16.0.0/12`  |
+| `192.168.0.0 – 192.168.255.255` | `192.168.0.0/16` |
+
+### Security Importance
+
+Private addresses are particularly relevant to:
+
+* Network segmentation
+* Internal services
+* SSRF
+
+A vulnerable public-facing server should not allow an attacker to make it access arbitrary internal private addresses.
+
+---
+
+# 8. Localhost
+
+**Localhost** refers to the current machine.
+
+Common addresses:
+
+* IPv4 → `127.0.0.1`
+* IPv6 → `::1`
+
+### Security Relevance
+
+SSRF attacks may attempt to access services running on localhost.
+
+For example, an internal administration service may only listen on localhost but could potentially become reachable through a vulnerable server-side request mechanism.
+
+---
+
+# 9. Network Port
+
+A **port** is a logical communication endpoint used by network services.
+
+Common examples:
+
+| Service | Port |
+| ------- | ---: |
+| HTTP    |   80 |
+| HTTPS   |  443 |
+| SSH     |   22 |
+| DNS     |   53 |
+| RDP     | 3389 |
+
+### Security Importance
+
+Open ports represent part of the system's **attack surface**.
+
+Security reviews should check:
+
+* Exposed ports
+* Firewall rules
+* Security Groups
+* Network Security Groups
+* Unnecessary services
+* Public IP exposure
+
+---
+
+# 10. TCP
+
+**TCP = Transmission Control Protocol**
+
+TCP is:
+
+* Connection-oriented
+* Reliable
+* Ordered
+* Capable of retransmitting lost packets
+
+Common TCP-based services include:
+
+* HTTP
+* HTTPS
+* SSH
+* SMTP
+* Databases
+
+Security tools such as Nmap commonly scan TCP ports to identify exposed services.
+
+---
+
+# 11. UDP
+
+**UDP = User Datagram Protocol**
+
+UDP is:
+
+* Connectionless
+* Faster in many scenarios
+* Not guaranteed to deliver packets
+* Does not guarantee packet ordering
+
+Common uses:
+
+* DNS
+* DHCP
+* Streaming
+* Some VPN protocols
+
+### Security Relevance
+
+Misconfigured UDP services can participate in:
+
+* DDoS amplification attacks
+
+UDP scanning also differs from TCP scanning because UDP does not use a TCP-style handshake.
+
+---
+
+# 12. HTTP
+
+**HTTP = Hypertext Transfer Protocol**
+
+HTTP enables communication between clients and web servers.
+
+### Common HTTP Methods
+
+* GET
+* POST
+* PUT
+* PATCH
+* DELETE
+
+### Common Status Codes
+
+* 200
+* 301
+* 403
+* 404
+* 500
+
+### Security Relevance
+
+Application security testing frequently involves manipulating HTTP requests and responses.
+
+Tools such as:
+
+* Burp Suite
+* OWASP ZAP
+
+can inspect and modify HTTP traffic.
+
+---
+
+# 13. HTTPS
+
+**HTTPS = HTTP over TLS**
+
+HTTPS protects data in transit by providing encryption and integrity.
+
+### What HTTPS Protects
+
+* Confidentiality
+* Integrity
+
+### Important Point
+
+HTTPS does **not** automatically mean that the application is secure.
+
+An HTTPS website can still contain:
+
+* SQL Injection
+* XSS
+* IDOR
+* Broken Access Control
+* Authentication vulnerabilities
+
+---
+
+# 14. TLS
+
+**TLS = Transport Layer Security**
+
+TLS provides:
+
+1. Encryption
+2. Integrity
+3. Authentication
+
+TLS replaced older SSL protocols.
+
+### TLS Security Checks
+
+Security reviews should examine:
+
+* Certificate validity
+* Supported protocol versions
+* Cipher suites
+* HSTS
+* Weak protocols
+
+Older protocols such as TLS 1.0 and TLS 1.1 should generally be disabled where applicable.
+
+---
+
+# 15. HTTP Request
+
+An **HTTP request** is sent from a client to a server.
+
+It can contain:
+
+* HTTP method
+* Path
+* Headers
+* Cookies
+* Query parameters
+* Request body
+
+Example:
+
+```http
+GET /profile?id=10
+Host: example.com
+Authorization: Bearer <token>
+Cookie: session=abc123
+```
+
+### Security Testing
+
+Security testers manipulate:
+
+* Parameters
+* Cookies
+* Authorization headers
+* Methods
+* Request bodies
+
+to test:
+
+* Authentication
+* Authorization
+* Injection
+* Business logic
+
+---
+
+# 16. HTTP Response
+
+An **HTTP response** is sent from a server to a client.
+
+It normally contains:
+
+* Status code
+* Headers
+* Cookies
+* Response body
+
+### Security Testing
+
+Responses can reveal:
+
+* Sensitive information
+* Error messages
+* Security headers
+* Authorization failures
+* Tokens
+* Inconsistent application behavior
+
+---
+
+# 17. HTTP Methods
+
+HTTP methods describe the intended action.
+
+| Method  | Typical purpose          |
+| ------- | ------------------------ |
+| GET     | Retrieve data            |
+| POST    | Submit/create data       |
+| PUT     | Replace data             |
+| PATCH   | Partially update data    |
+| DELETE  | Delete data              |
+| OPTIONS | Discover allowed methods |
+
+### Security Considerations
+
+Security testing checks whether:
+
+* Authorization applies to every method.
+* Sensitive actions are accessible through unexpected methods.
+* Dangerous methods are exposed.
+* API endpoints enforce appropriate permissions.
+
+---
+
+# 18. HTTP Status Codes
+
+HTTP status codes communicate the outcome of a request.
+
+| Range | Meaning      |
+| ----- | ------------ |
+| 2xx   | Success      |
+| 3xx   | Redirection  |
+| 4xx   | Client error |
+| 5xx   | Server error |
+
+Important examples:
+
+* **401** → unauthenticated
+* **403** → forbidden
+* **404** → resource not found
+* **500** → server-side error
+
+### Security Relevance
+
+Differences in status codes can sometimes reveal:
+
+* Username enumeration
+* Authorization problems
+* Hidden endpoints
+* Application behavior
+
+---
+
+# 19. HTTP Headers
+
+HTTP headers provide metadata about requests and responses.
+
+### Request Headers
+
+Examples:
+
+* `Authorization`
+* `Cookie`
+* `User-Agent`
+* `Origin`
+* `Content-Type`
+
+### Response Headers
+
+Examples:
+
+* `Set-Cookie`
+* `Content-Security-Policy`
+* `Strict-Transport-Security`
+
+### Security Importance
+
+Headers can control or influence:
+
+* Authentication
+* Cookies
+* CORS
+* Caching
+* Content type
+* Clickjacking protection
+* CSP
+* Transport security
+
+---
+
+# 20. Cookies
+
+A **cookie** is a small piece of information stored by a browser and sent with matching requests.
+
+Common uses:
+
+* Session management
+* Preferences
+* Tracking
+
+### Important Security Attributes
+
+**Secure**
+
+Cookie is sent over secure connections.
+
+**HttpOnly**
+
+Helps prevent client-side JavaScript from directly accessing the cookie.
+
+**SameSite**
+
+Controls cross-site cookie sending behavior.
+
+### Security Principle
+
+Session cookies should use appropriate security attributes, and sensitive information should not be stored directly in cookies without adequate protection.
+
+---
+
+# 21. Session
+
+A **session** maintains a user's authenticated state across multiple requests.
+
+Without sessions, users would have to authenticate for every request.
+
+### Session Security
+
+Important controls include:
+
+* Session expiration
+* Logout invalidation
+* Session rotation after login
+* Protection against session fixation
+* Secure cookie configuration
+* Protection against session theft
+
+---
+
+# 22. API
+
+**API = Application Programming Interface**
+
+An API allows software systems to communicate with each other.
+
+Modern web APIs commonly use:
+
+* HTTP
+* JSON
+
+### API Security
+
+APIs should implement:
+
+* Authentication
+* Authorization
+* Input validation
+* Schema validation
+* Rate limiting
+* Logging
+* Protection against excessive data exposure
+
+---
+
+# 23. REST API
+
+**REST** is an architectural style where resources are accessed through URLs and standard HTTP methods.
+
+Example:
+
+```text
+GET /users/10
+```
+
+retrieves user 10.
+
+```text
+DELETE /users/10
+```
+
+deletes user 10 if the requester is authorized.
+
+### Important Security Issue
+
+REST APIs can suffer from **Broken Object-Level Authorization (BOLA)** if the server does not verify whether the authenticated user is authorized to access the requested object.
+
+---
+
+# 24. JSON
+
+**JSON = JavaScript Object Notation**
+
+JSON is a lightweight format commonly used for exchanging data between applications and APIs.
+
+Example:
+
+```json
+{
+  "id": 10,
+  "name": "Aditya"
+}
+```
+
+### Security Relevance
+
+JSON fields represent user-controlled input and should be validated.
+
+Security testing can examine:
+
+* Injection
+* Mass assignment
+* Hidden fields
+* Authorization bypass
+* Schema violations
+
+---
+
+# 25. XML
+
+**XML = Extensible Markup Language**
+
+XML structures and represents data.
+
+It can appear in:
+
+* Older APIs
+* SOAP
+* SAML
+* Document-processing systems
+
+### Security Issue: XXE
+
+XML parsers can introduce **XML External Entity (XXE)** vulnerabilities if external entity processing is enabled.
+
+Secure XML processing should disable unnecessary external entity resolution.
+
+---
+
+# 26. Proxy
+
+A **proxy** sits between a client and server and forwards traffic.
+
+A proxy can:
+
+* Inspect traffic
+* Modify requests
+* Log traffic
+* Filter traffic
+
+Security testing tools such as:
+
+* Burp Suite
+* OWASP ZAP
+
+can function as web proxies.
+
+### Security Use
+
+A tester can intercept requests and modify:
+
+* Parameters
+* Tokens
+* Headers
+* HTTP methods
+* Request bodies
+
+---
+
+# 27. Reverse Proxy
+
+A **reverse proxy** sits in front of backend servers.
+
+Architecture:
+
+```text
+Client
+   ↓
+Reverse Proxy
+   ↓
+Backend Server
+```
+
+Examples include:
+
+* Nginx
+* Apache
+* HAProxy
+* AWS ALB
+* Azure Application Gateway
+* Google Cloud Load Balancer
+
+### Security Functions
+
+A reverse proxy can:
+
+* Terminate TLS
+* Enforce WAF rules
+* Rate limit requests
+* Add security headers
+* Route traffic
+* Hide backend topology
+
+---
+
+# 28. Load Balancer
+
+A **load balancer** distributes incoming traffic across multiple backend servers.
+
+Architecture:
+
+```text
+             ┌── Server 1
+Client → LB ─┼── Server 2
+             └── Server 3
+```
+
+### Benefits
+
+* Availability
+* Scalability
+* Traffic distribution
+
+### Security Relevance
+
+Load balancers can:
+
+* Terminate TLS
+* Integrate with WAF
+* Provide public entry points
+* Control routing
+
+Misconfiguration can accidentally expose internal services.
+
+---
+
+# 29. Firewall
+
+A **firewall** filters network traffic according to predefined rules.
+
+Rules can consider:
+
+* Source
+* Destination
+* Port
+* Protocol
+* Direction
+
+Examples:
+
+* AWS Security Groups
+* Azure NSGs
+* GCP firewall rules
+
+### Security Principle
+
+A firewall reduces attack surface by allowing only required network traffic.
+
+However:
+
+**Firewall security ≠ complete application security**
+
+Application-level vulnerabilities can still exist behind a firewall.
+
+---
+
+# 30. VPN
+
+**VPN = Virtual Private Network**
+
+A VPN creates an encrypted tunnel between users or networks.
+
+Organizations commonly use VPNs to provide private access to internal resources.
+
+### Security Use
+
+Administrative interfaces should often be accessible through:
+
+* VPN
+* Bastion hosts
+* Private networks
+
+rather than being directly exposed to the internet.
+
+---
+
+# 31. CDN
+
+**CDN = Content Delivery Network**
+
+A CDN distributes and caches content through geographically distributed edge locations.
+
+Examples:
+
+* Cloudflare
+* Akamai
+* AWS CloudFront
+* Azure CDN
+* Google Cloud CDN
+
+### Security Capabilities
+
+CDNs can provide:
+
+* DDoS protection
+* WAF
+* TLS termination
+* Bot filtering
+* Caching
+
+### Security Risks
+
+Incorrect configuration can:
+
+* Expose origin servers
+* Cache sensitive information
+* Bypass intended security controls
+
+---
+
+# 32. Linux Security Basics
+
+## 32.1 Why Linux Is Important for DevSecOps
+
+Linux is widely used for:
+
+* Servers
+* Containers
+* CI runners
+* Cloud instances
+* Kubernetes nodes
+
+A DevSecOps engineer should understand:
+
+* Linux permissions
+* Processes
+* Logs
+* Services
+* Networking commands
+* Package updates
+* SSH
+
+Linux knowledge is important for both security operations and troubleshooting.
+
+---
+
+# 33. Linux Users and Groups
+
+Linux **users** represent individual accounts.
+
+**Groups** allow permissions to be assigned to multiple users.
+
+Files and processes operate under users and groups.
+
+### Security Principle
+
+Services should generally run using dedicated low-privilege accounts rather than root.
+
+Group membership must also be reviewed because certain groups can provide powerful privileges, such as:
+
+* `sudo`
+* Docker socket access
+
+---
+
+# 34. Root
+
+**Root** is the Linux superuser.
+
+Root has extensive administrative privileges and can:
+
+* Modify system files
+* Change permissions
+* Install software
+* Control processes
+
+### Security Risk
+
+Running applications as root increases the potential impact of a compromise.
+
+The same principle applies to containers:
+
+**Avoid running containers as root unless it is genuinely required.**
+
+---
+
+# 35. sudo
+
+`sudo` allows an authorized user to execute commands with elevated privileges.
+
+Configuration is controlled through sudoers.
+
+### Security Considerations
+
+* Limit sudo permissions.
+* Audit sudo access.
+* Avoid unnecessarily broad permissions.
+
+Excessive sudo permissions can create privilege-escalation opportunities.
+
+---
+
+# 36. Linux File Permissions
+
+Linux permissions control:
+
+* Read
+* Write
+* Execute
+
+for:
+
+1. Owner
+2. Group
+3. Others
+
+Example:
+
+```text
+rwxr-x---
+```
+
+Meaning:
+
+| Entity | Permissions            |
+| ------ | ---------------------- |
+| Owner  | Read + Write + Execute |
+| Group  | Read + Execute         |
+| Others | None                   |
+
+### Security Importance
+
+Weak permissions can:
+
+* Expose secrets
+* Allow unauthorized modification
+* Enable execution of malicious files
+
+---
+
+# 37. chmod
+
+`chmod` changes file permissions.
+
+Example:
+
+```bash
+chmod 600 key.pem
+```
+
+This gives the owner read/write access while restricting access from others.
+
+### Security Principle
+
+Private keys and sensitive configuration files should have restrictive permissions.
+
+Avoid unnecessarily broad permissions such as:
+
+```bash
+chmod 777
+```
+
+---
+
+# 38. chown
+
+`chown` changes file ownership.
+
+It can assign a file to a specific:
+
+* User
+* Group
+
+### Security Importance
+
+Correct ownership prevents unauthorized users from modifying:
+
+* Application files
+* Binaries
+* Logs
+* Secrets
+
+---
+
+# 39. Linux Process
+
+A **process** is a running program.
+
+A process has information such as:
+
+* Process ID
+* Owner
+* Memory
+* Open files
+* Command-line arguments
+
+### Security Monitoring
+
+Process inspection can help identify:
+
+* Suspicious commands
+* Unexpected services
+* Cryptocurrency miners
+* Reverse shells
+* Exposed secrets in command arguments
+
+---
+
+# 40. Linux Service
+
+A **service** is a background process managed by the operating system, commonly through systemd.
+
+Examples:
+
+* SSH
+* Nginx
+* Database services
+* Application daemons
+
+### Security Principle
+
+Unnecessary services should be disabled.
+
+Running services should be:
+
+* Patched
+* Securely configured
+* Monitored
+
+---
+
+# 41. Linux Logs
+
+Linux logs record events related to:
+
+* System activity
+* Authentication
+* Services
+* Applications
+
+Common locations include:
+
+```text
+/var/log/auth.log
+/var/log/syslog
+/var/log/secure
+```
+
+Systemd systems may also use the journal.
+
+### Security Importance
+
+Logs help investigate:
+
+* Failed login attempts
+* Privilege escalation
+* Service crashes
+* Suspicious commands
+* Security incidents
+
+---
+
+# 42. SSH
+
+**SSH = Secure Shell**
+
+SSH provides secure remote command-line access to systems.
+
+Common port:
+
+```text
+22
+```
+
+### SSH Security Practices
+
+* Prefer key-based authentication.
+* Disable password authentication where appropriate.
+* Restrict source IPs.
+* Avoid direct root login.
+* Use MFA where supported.
+* Use bastion or private access.
+* Monitor authentication attempts.
+* Rotate keys.
+
+---
+
+# 43. Why Internet-Exposed SSH Is Risky
+
+Publicly accessible SSH services are continuously exposed to:
+
+* Brute-force attempts
+* Stolen credentials
+* Stolen keys
+* Exploit attempts
+
+If authentication credentials or private keys are compromised, attackers may gain server access.
+
+### Cloud Protection
+
+SSH access can be restricted through:
+
+* VPN
+* Bastion hosts
+* SSM-style management mechanisms
+* Approved IP ranges
+* Private networks
+
+Authentication attempts should also be monitored.
+
+---
+
+# 44. Patching
+
+**Patching** means applying updates that fix:
+
+* Vulnerabilities
+* Bugs
+* Stability issues
+
+Patching applies to:
+
+* Operating systems
+* Libraries
+* Applications
+* Containers
+* Kubernetes
+* Cloud services
+
+### DevSecOps Importance
+
+Unpatched software is a common security risk.
+
+DevSecOps should automate:
+
+**Detection → Prioritization → Patch → Test → Deploy → Verify**
+
+---
+
+# 45. Hardening
+
+**Hardening** means reducing the attack surface and securely configuring a system.
+
+Common hardening activities:
+
+* Disable unnecessary services.
+* Apply security patches.
+* Enforce least privilege.
+* Restrict network access.
+* Enable logging.
+* Configure secure permissions.
+* Remove unnecessary software.
+
+Security hardening can be based on standards such as **CIS Benchmarks** where applicable.
+
+---
+
+# 46. Package Manager
+
+A package manager installs, updates, and removes software packages.
+
+Examples:
+
+```text
+apt
+yum
+dnf
+apk
+npm
+pip
+maven
+go mod
+```
+
+### Security Risks
+
+Dependencies can contain:
+
+* Vulnerabilities
+* Malicious packages
+* Outdated components
+
+### Security Controls
+
+Use:
+
+* Trusted repositories
+* Lockfiles
+* Dependency scanning
+* Version control
+* Controlled package versions
+
+---
+
+# 47. Git and Source Control Security
+
+## 47.1 Why Git Is Important in DevSecOps
+
+Git stores:
+
+* Source code
+* Infrastructure-as-Code
+* CI/CD workflows
+* Configuration
+* Documentation
+* Change history
+
+Security can be integrated directly into Git workflows.
+
+### DevSecOps Git Controls
+
+* Pull request checks
+* Branch protection
+* Secret scanning
+* Code review
+* Signed commits
+* CODEOWNERS
+* Security gates
+
+A major concern is that repositories can contain leaked credentials or malicious changes.
+
+---
+
+# 48. Repository
+
+A **repository** stores project files and their change history.
+
+A repository may contain:
+
+* Source code
+* Infrastructure code
+* CI/CD workflows
+* Documentation
+* Configuration
+
+### Security Risks
+
+A repository can accidentally expose:
+
+* Secrets
+* Internal architecture
+* Vulnerabilities
+* Deployment logic
+
+Therefore, repository access must be controlled.
+
+---
+
+# 49. Git Branch
+
+A **branch** is an independent line of development.
+
+Branches allow teams to work separately on:
+
+* Features
+* Bug fixes
+* Releases
+
+before merging changes.
+
+### Security Relevance
+
+Important branches such as `main` should be protected against unauthorized or unreviewed changes.
+
+---
+
+# 50. Pull Request
+
+A **Pull Request (PR)** requests that changes from one branch be merged into another.
+
+PRs provide a place for:
+
+* Code review
+* Discussion
+* Automated checks
+* Security validation
+
+### Security Checks in PRs
+
+A PR can trigger:
+
+* SAST
+* SCA
+* Secret scanning
+* IaC scanning
+* Security gates
+* CODEOWNERS review
+
+This makes the PR an important **shift-left security checkpoint**.
+
+---
+
+# 51. Branch Protection
+
+Branch protection enforces rules before code can be merged.
+
+Possible controls include:
+
+* Required reviews
+* Passing CI checks
+* Signed commits
+* No force pushes
+* Restricted access
+
+### Security Benefit
+
+Branch protection reduces the chance of unauthorized or unreviewed changes reaching production.
+
+---
+
+# 52. CODEOWNERS
+
+`CODEOWNERS` defines who must review changes to specific files or directories.
+
+For example, organizations may require security-team review for:
+
+```text
+authentication/
+terraform/
+.github/workflows/
+```
+
+### Security Benefit
+
+Sensitive areas receive review from the appropriate technical owners.
+
+---
+
+# 53. Secrets in Git
+
+Putting secrets in Git is dangerous because Git stores history.
+
+Even if a secret is deleted later, copies may remain in:
+
+* Previous commits
+* Forks
+* Clones
+* CI logs
+* Caches
+
+Attackers also actively search repositories for exposed credentials.
+
+### Correct Response
+
+Simply deleting the secret is not enough.
+
+The important response is:
+
+**Detect → Revoke/Rotate → Remove Exposure → Investigate**
+
+---
+
+# 54. Git History Rewriting
+
+History rewriting changes previous commits, often to remove sensitive files or information.
+
+Tools include:
+
+* `git filter-repo`
+* BFG Repo-Cleaner
+
+### Critical Security Principle
+
+History rewriting does **not** make a leaked credential safe.
+
+If a secret was exposed:
+
+**Rotate/revoke the secret first.**
+
+Then clean the repository history as appropriate.
+
+---
+
+# 55. Signed Commits
+
+Signed commits use cryptographic signatures to prove that a commit came from a trusted signing key.
+
+### Benefits
+
+* Integrity
+* Accountability
+* Verification of commit authorship
+
+### Security Consideration
+
+Signed commits require proper:
+
+* Key management
+* Key protection
+* Organizational policy
+* Verification enforcement
+
+---
+
+# 56. GitHub Actions Security Risks
+
+GitHub Actions workflows can introduce security risks.
+
+Important risks include:
+
+* Over-permissive tokens
+* Untrusted third-party actions
+* Secrets exposed to pull requests
+* Command injection
+* Unsafe pull-request events
+* Unpinned actions
+* Compromised runners
+
+### Security Controls
+
+Use:
+
+* Least-privilege token permissions
+* Pinned actions
+* Protected branches
+* Environment approvals
+* Secret masking
+* Secure runners
+* Careful handling of pull-request events
+
+---
+
+# 57. Core DevSecOps Security Principles
+
+The concepts in these notes can be connected through several major principles.
+
+## Least Privilege
+
+Give users, services, applications, CI jobs, and cloud identities only the permissions they actually require.
+
+Example:
+
+```text
+Application → Database Read Access
+             ↓
+        No Admin Access
+```
+
+---
+
+## Defense in Depth
+
+Do not depend on one security control.
+
+Example:
+
+```text
+CDN/WAF
+   ↓
+Firewall
+   ↓
+Reverse Proxy
+   ↓
+Application Authentication
+   ↓
+Authorization
+   ↓
+Database Controls
+   ↓
+Logging & Monitoring
+```
+
+If one control fails, other layers remain.
+
+---
+
+## Attack Surface Reduction
+
+Reduce the number of exposed components.
+
+Examples:
+
+* Close unnecessary ports.
+* Disable unnecessary services.
+* Remove unused packages.
+* Avoid public SSH.
+* Keep internal services private.
+* Restrict cloud security rules.
+
+---
+
+## Secure by Default
+
+Systems should start with restrictive security settings rather than requiring users to manually enable security.
+
+Examples:
+
+* Private network by default
+* Least-privilege permissions
+* Secure cookies
+* Protected branches
+* Minimal container privileges
+
+---
+
+## Shift Left
+
+Security should be introduced as early as possible in development.
+
+```text
+Code
+ ↓
+Pull Request
+ ↓
+SAST / SCA / Secret Scan / IaC Scan
+ ↓
+Build
+ ↓
+Container Scan
+ ↓
+Deploy
+ ↓
+Runtime Monitoring
+```
+
+Security therefore becomes part of development rather than only a final testing phase.
+
+---
+
+# 58. Important Security Relationships
+
+## Client vs Server
+
+| Client                  | Server                     |
+| ----------------------- | -------------------------- |
+| Requests services       | Provides services          |
+| Browser/mobile app      | Backend/API                |
+| User-controlled         | Organization-controlled    |
+| Cannot be fully trusted | Must enforce authorization |
+
+---
+
+## HTTP vs HTTPS
+
+| HTTP                           | HTTPS                                      |
+| ------------------------------ | ------------------------------------------ |
+| Application protocol           | HTTP secured using TLS                     |
+| Data can be exposed in transit | Data is encrypted in transit               |
+| No TLS protection              | TLS provides confidentiality and integrity |
+| Usually port 80                | Usually port 443                           |
+
+---
+
+## TCP vs UDP
+
+| TCP                       | UDP                           |
+| ------------------------- | ----------------------------- |
+| Connection-oriented       | Connectionless                |
+| Reliable                  | No delivery guarantee         |
+| Ordered delivery          | No ordering guarantee         |
+| Retransmission            | No built-in retransmission    |
+| Common for HTTP/HTTPS/SSH | Common for DNS/DHCP/streaming |
+
+---
+
+## Proxy vs Reverse Proxy
+
+| Proxy                                         | Reverse Proxy                                 |
+| --------------------------------------------- | --------------------------------------------- |
+| Represents/serves as intermediary for clients | Represents/serves as intermediary for servers |
+| Client → Proxy → Server                       | Client → Reverse Proxy → Server               |
+| Useful for client-side traffic inspection     | Useful for server-side traffic management     |
+| Burp Suite can act as proxy                   | Nginx can act as reverse proxy                |
+
+---
+
+## Authentication vs Authorization
+
+**Authentication:**
+Determines **who you are**.
+
+**Authorization:**
+Determines **what you are allowed to do**.
+
+Example:
+
+```text
+Login
+ ↓
+Authentication
+ ↓
+User identified
+ ↓
+Authorization
+ ↓
+Check whether user can access /admin
+```
+
+---
+
