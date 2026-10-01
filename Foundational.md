@@ -1,6 +1,6 @@
-================================================================================
+
                      DEVSECOPS FOUNDATIONS - COMPREHENSIVE NOTES
-================================================================================
+
 
 
 TABLE OF CONTENTS
@@ -71,12 +71,12 @@ TABLE OF CONTENTS
   58. Important Security Relationships
 
 
-================================================================================
+
 1. COMPUTING AND INTERNET BASICS
-================================================================================
+
 
 1.1 Computer System
---------------------------------------------------------------------------------
+
 A computer system is a combination of hardware, operating system, software,
 network, storage, and users that work together to process data.
 
@@ -163,9 +163,9 @@ Application Security - protects against vulnerabilities in:
   - Runtime behavior
 
 
-================================================================================
+
 2. WEB APPLICATION FUNDAMENTALS
-================================================================================
+
 
 2.1 Web Application
 --------------------------------------------------------------------------------
